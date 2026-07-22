@@ -1,0 +1,64 @@
+import pandas as pd
+import numpy as np
+
+from sklearn.datasets import load_iris
+from sklearn.model_selection import train_test_split
+from sklearn.neighbors import KNeighborsClassifier
+from sklearn.metrics import accuracy_score, confusion_matrix, classification_report
+
+iris = load_iris()
+
+X = iris.data
+y = iris.target
+
+print("Feature Names:")
+print(iris.feature_names)
+
+print("\nTarget Names:")
+print(iris.target_names)
+
+df = pd.DataFrame(X, columns=iris.feature_names)
+df["Species"] = y
+
+df["Species"] = df["Species"].map({
+    0:"Setosa",
+    1:"Versicolor",
+    2:"Virginica"
+})
+
+print(df.head())
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X,
+    y,
+    test_size=0.2,
+    random_state=42
+)
+
+print("Training Samples:", len(X_train))
+print("Testing Samples:", len(X_test))
+
+model = KNeighborsClassifier(n_neighbors=3)
+
+model.fit(X_train, y_train)
+
+
+predictions = model.predict(X_test)
+
+print(predictions)
+
+accuracy = accuracy_score(y_test, predictions)
+
+print("Accuracy:", accuracy)
+
+cm = confusion_matrix(y_test, predictions)
+
+print(cm)
+
+print(classification_report(y_test, predictions))
+
+new_flower = [[6.1,2.5,4.4,1.2]]
+
+prediction = model.predict(new_flower)
+
+print("Predicted Species:", iris.target_names[prediction][0])
